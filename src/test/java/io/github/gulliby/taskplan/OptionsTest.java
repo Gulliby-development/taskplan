@@ -158,7 +158,7 @@ class OptionsTest {
     void exposesTheFourExactUsageLines() {
         assertEquals(String.join("\n",
                 "usage: taskplan check FILE",
-                "       taskplan critical FILE",
+                "       taskplan critical [--max-slack N] FILE",
                 "       taskplan schedule [--workers N] FILE",
                 "       taskplan gantt [--scale K] FILE"), Options.USAGE);
     }

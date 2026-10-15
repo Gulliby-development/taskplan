@@ -37,17 +37,25 @@ public final class Report {
 
     /** Formats the critical-path table and project summary. */
     public static List<String> critical(Cpm cpm) {
+        return critical(cpm, null);
+    }
+
+    /** Formats the critical-path table filtered to tasks at or below the optional slack threshold. */
+    public static List<String> critical(Cpm cpm, Integer maxSlack) {
         Objects.requireNonNull(cpm, "cpm");
         List<Task> tasks = cpm.tasks();
         List<String[]> rows = new ArrayList<>(tasks.size());
         for (Task task : tasks) {
-            rows.add(new String[] {
-                    task.name(),
-                    Integer.toString(task.duration()),
-                    Long.toString(cpm.earliestStart(task)),
-                    Long.toString(cpm.earliestFinish(task)),
-                    Long.toString(cpm.slack(task))
-            });
+            long slack = cpm.slack(task);
+            if (maxSlack == null || slack <= maxSlack) {
+                rows.add(new String[] {
+                        task.name(),
+                        Integer.toString(task.duration()),
+                        Long.toString(cpm.earliestStart(task)),
+                        Long.toString(cpm.earliestFinish(task)),
+                        Long.toString(slack)
+                });
+            }
         }
         int[] widths = columnWidths(new String[] {"TASK", "DUR", "START", "FINISH", "SLACK"}, rows);
         List<String> output = new ArrayList<>(rows.size() + 3);

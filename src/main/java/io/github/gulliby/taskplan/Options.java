@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 /** Parses the command-line arguments for taskplan. */
-public record Options(String command, String file, int workers, int scale, boolean help) {
+public record Options(String command, String file, int workers, int scale, Integer maxSlack, boolean help) {
     public static final String USAGE = String.join("\n",
             "usage: taskplan check FILE",
-            "       taskplan critical FILE",
+            "       taskplan critical [--max-slack N] FILE",
             "       taskplan schedule [--workers N] FILE",
             "       taskplan gantt [--scale K] FILE");
 
@@ -26,7 +26,7 @@ public record Options(String command, String file, int workers, int scale, boole
             throw new PlanException("missing command (check, critical, schedule or gantt)");
         }
         if (args.length == 1 && args[0].equals("--help")) {
-            return new Options("", null, 2, 1, true);
+            return new Options("", null, 2, 1, null, true);
         }
         if (args[0].equals("--help")) {
             throw unknownOption(args[0]);
@@ -40,6 +40,7 @@ public record Options(String command, String file, int workers, int scale, boole
 
         String workerText = null;
         String scaleText = null;
+        String maxSlackText = null;
         List<String> positionals = new ArrayList<>();
         for (int index = 1; index < args.length; index++) {
             String argument = args[index];
@@ -57,6 +58,13 @@ public record Options(String command, String file, int workers, int scale, boole
                 scaleText = args[++index];
             } else if (argument.startsWith("--scale=")) {
                 scaleText = argument.substring("--scale=".length());
+            } else if (argument.equals("--max-slack")) {
+                if (index + 1 == args.length) {
+                    throw new PlanException("--max-slack needs a value");
+                }
+                maxSlackText = args[++index];
+            } else if (argument.startsWith("--max-slack=")) {
+                maxSlackText = argument.substring("--max-slack=".length());
             } else if (argument.startsWith("-") && !argument.equals("-")) {
                 throw unknownOption(argument);
             } else {
@@ -68,11 +76,16 @@ public record Options(String command, String file, int workers, int scale, boole
                 "--workers", workerText, 1, 64, "a whole number from 1 to 64");
         int scale = scaleText == null ? 1 : parseNumber(
                 "--scale", scaleText, 1, 1000, "a whole number from 1 to 1000");
+        Integer maxSlack = maxSlackText == null ? null : parseNumber(
+                "--max-slack", maxSlackText, 0, 100000, "a whole number from 0 to 100000");
         if (workerText != null && !command.equals("schedule")) {
             throw new PlanException("--workers is only valid for schedule");
         }
         if (scaleText != null && !command.equals("gantt")) {
             throw new PlanException("--scale is only valid for gantt");
+        }
+        if (maxSlackText != null && !command.equals("critical")) {
+            throw new PlanException("--max-slack is only valid for critical");
         }
         if (positionals.isEmpty()) {
             throw new PlanException("missing FILE");
@@ -80,7 +93,7 @@ public record Options(String command, String file, int workers, int scale, boole
         if (positionals.size() > 1) {
             throw new PlanException("too many arguments");
         }
-        return new Options(command, positionals.get(0), workers, scale, false);
+        return new Options(command, positionals.get(0), workers, scale, maxSlack, false);
     }
 
     public boolean isHelp() {
