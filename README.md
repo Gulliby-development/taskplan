@@ -32,7 +32,7 @@ Run `--help` by itself to print:
 
 ```text
 usage: taskplan check FILE
-       taskplan critical FILE
+       taskplan critical [--max-slack N] FILE
        taskplan schedule [--workers N] FILE
        taskplan gantt [--scale K] FILE
 ```
@@ -77,6 +77,22 @@ length: 17
 critical tasks: build, test, package, deploy
 ```
 
+Add `--max-slack N` (a whole number from 0 to 100000) to list only the tasks whose slack is at most N; `0` lists the critical tasks only. The `length:` and `critical tasks:` lines stay as they are:
+
+```text
+java -cp target/classes io.github.gulliby.taskplan.Main critical --max-slack 0 plan.txt
+```
+
+```text
+TASK     DUR  START  FINISH  SLACK
+build      5      0       5      0
+test       8      5      13      0
+package    3     13      16      0
+deploy     1     16      17      0
+length: 17
+critical tasks: build, test, package, deploy
+```
+
 Simulate assignments (the default is two workers):
 
 ```text
@@ -111,7 +127,7 @@ package |.............###.|
 deploy  |................#|
 ```
 
-Use `--workers N` to set the worker count for `schedule`, or `--scale K` to set the time scale for `gantt`.
+Use `--workers N` to set the worker count for `schedule`, `--scale K` to set the time scale for `gantt`, or `--max-slack N` to limit the tasks listed by `critical`.
 
 ## Plan file
 

@@ -42,7 +42,7 @@ class CliTest {
         assertEquals(0, result.status());
         assertEquals("""
                 usage: taskplan check FILE
-                       taskplan critical FILE
+                       taskplan critical [--max-slack N] FILE
                        taskplan schedule [--workers N] FILE
                        taskplan gantt [--scale K] FILE
                 """, result.stdout());

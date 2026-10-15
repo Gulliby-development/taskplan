@@ -93,7 +93,7 @@ public final class Cli {
         Cpm cpm = new Cpm(graph);
         return switch (options.command()) {
             case "critical" -> {
-                for (String line : Report.critical(cpm)) {
+                for (String line : Report.critical(cpm, options.maxSlack())) {
                     writeLine(stdout, line);
                 }
                 yield 0;
