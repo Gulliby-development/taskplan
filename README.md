@@ -35,6 +35,7 @@ usage: taskplan check FILE
        taskplan critical [--max-slack N] FILE
        taskplan schedule [--workers N] FILE
        taskplan gantt [--scale K] FILE
+       taskplan order FILE
 ```
 
 The following worked example uses `plan.txt`:
@@ -126,6 +127,23 @@ lint    |.....##------....|
 package |.............###.|
 deploy  |................#|
 ```
+
+List the tasks in an order that can be followed from top to bottom, one name per line:
+
+```text
+java -cp target/classes io.github.gulliby.taskplan.Main order plan.txt
+```
+
+```text
+build
+test
+lint
+package
+deploy
+docs
+```
+
+Every task comes after all of its dependencies. When several tasks are ready, the one that is first in the file comes first. `order` takes no options and stops on the same plan problems as `critical`, `schedule` and `gantt`.
 
 Use `--workers N` to set the worker count for `schedule`, `--scale K` to set the time scale for `gantt`, or `--max-slack N` to limit the tasks listed by `critical`.
 

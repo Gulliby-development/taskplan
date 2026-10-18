@@ -10,7 +10,8 @@ public record Options(String command, String file, int workers, int scale, Integ
             "usage: taskplan check FILE",
             "       taskplan critical [--max-slack N] FILE",
             "       taskplan schedule [--workers N] FILE",
-            "       taskplan gantt [--scale K] FILE");
+            "       taskplan gantt [--scale K] FILE",
+            "       taskplan order FILE");
 
     public Options {
         Objects.requireNonNull(command, "command");
@@ -23,7 +24,7 @@ public record Options(String command, String file, int workers, int scale, Integ
     public static Options parse(String[] args) {
         Objects.requireNonNull(args, "args");
         if (args.length == 0) {
-            throw new PlanException("missing command (check, critical, schedule or gantt)");
+            throw new PlanException("missing command (check, critical, schedule, gantt or order)");
         }
         if (args.length == 1 && args[0].equals("--help")) {
             return new Options("", null, 2, 1, null, true);
@@ -34,7 +35,7 @@ public record Options(String command, String file, int workers, int scale, Integ
 
         String command = args[0];
         if (!command.equals("check") && !command.equals("critical")
-                && !command.equals("schedule") && !command.equals("gantt")) {
+                && !command.equals("schedule") && !command.equals("gantt") && !command.equals("order")) {
             throw new PlanException("unknown command \"" + command + "\"");
         }
 

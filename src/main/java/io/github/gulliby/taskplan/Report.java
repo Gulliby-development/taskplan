@@ -103,6 +103,14 @@ public final class Report {
         return Gantt.render(Objects.requireNonNull(cpm, "cpm"), scale);
     }
 
+    /** Formats task names in dependency-first order. */
+    public static List<String> order(Graph graph) {
+        Objects.requireNonNull(graph, "graph");
+        return graph.topologicalOrder().stream()
+                .map(Task::name)
+                .toList();
+    }
+
     private static int[] columnWidths(String[] header, List<String[]> rows) {
         int[] widths = new int[header.length];
         for (int column = 0; column < header.length; column++) {
