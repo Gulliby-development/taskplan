@@ -116,6 +116,12 @@ public final class Cli {
                     yield 2;
                 }
             }
+            case "order" -> {
+                for (String line : Report.order(graph)) {
+                    writeLine(stdout, line);
+                }
+                yield 0;
+            }
             default -> throw new IllegalStateException("unrecognized parsed command");
         };
     }

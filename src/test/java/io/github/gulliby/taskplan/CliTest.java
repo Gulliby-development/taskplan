@@ -45,6 +45,7 @@ class CliTest {
                        taskplan critical [--max-slack N] FILE
                        taskplan schedule [--workers N] FILE
                        taskplan gantt [--scale K] FILE
+                       taskplan order FILE
                 """, result.stdout());
         assertEquals("", result.stderr());
     }
@@ -62,7 +63,7 @@ class CliTest {
     static Stream<Arguments> argumentErrors() {
         return Stream.of(
                 Arguments.of((Object) new String[0],
-                        "missing command (check, critical, schedule or gantt)"),
+                        "missing command (check, critical, schedule, gantt or order)"),
                 Arguments.of((Object) new String[] {"unknown"},
                         "unknown command \"unknown\""),
                 Arguments.of((Object) new String[] {"--help", "FILE"},

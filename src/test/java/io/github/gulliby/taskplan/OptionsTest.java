@@ -55,7 +55,7 @@ class OptionsTest {
 
     static Stream<Arguments> invalidOptions() {
         return Stream.of(
-                error(new String[]{}, "missing command (check, critical, schedule or gantt)"),
+                error(new String[]{}, "missing command (check, critical, schedule, gantt or order)"),
                 error(new String[]{"unknown"}, "unknown command \"unknown\""),
                 error(new String[]{"--workers"}, "unknown command \"--workers\""),
                 error(new String[]{"--help", "check"}, "unknown option \"--help\""),
@@ -160,7 +160,8 @@ class OptionsTest {
                 "usage: taskplan check FILE",
                 "       taskplan critical [--max-slack N] FILE",
                 "       taskplan schedule [--workers N] FILE",
-                "       taskplan gantt [--scale K] FILE"), Options.USAGE);
+                "       taskplan gantt [--scale K] FILE",
+                "       taskplan order FILE"), Options.USAGE);
     }
 
     private static Arguments error(String[] args, String message) {
