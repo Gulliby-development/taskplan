@@ -180,6 +180,8 @@ Run the test suite and verification with:
 mvn -B -q verify
 ```
 
+JUnit is pinned in one place, the `junit.version` property of `pom.xml`; the JUnit BOM in `dependencyManagement` keeps every JUnit artifact on that version.
+
 
 ## License
 
