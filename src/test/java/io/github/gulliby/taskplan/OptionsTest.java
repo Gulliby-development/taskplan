@@ -161,7 +161,7 @@ class OptionsTest {
                 "       taskplan critical [--max-slack N] FILE",
                 "       taskplan schedule [--workers N] FILE",
                 "       taskplan gantt [--scale K] FILE",
-                "       taskplan order FILE"), Options.USAGE);
+                "       taskplan order [--reverse] FILE"), Options.USAGE);
     }
 
     private static Arguments error(String[] args, String message) {

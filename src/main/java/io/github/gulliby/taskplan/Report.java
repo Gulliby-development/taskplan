@@ -1,6 +1,7 @@
 package io.github.gulliby.taskplan;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -105,10 +106,19 @@ public final class Report {
 
     /** Formats task names in dependency-first order. */
     public static List<String> order(Graph graph) {
+        return order(graph, false);
+    }
+
+    /** Formats task names in dependency-first order, or in the exact reverse of it when asked. */
+    public static List<String> order(Graph graph, boolean reverse) {
         Objects.requireNonNull(graph, "graph");
-        return graph.topologicalOrder().stream()
+        List<String> names = new ArrayList<>(graph.topologicalOrder().stream()
                 .map(Task::name)
-                .toList();
+                .toList());
+        if (reverse) {
+            Collections.reverse(names);
+        }
+        return List.copyOf(names);
     }
 
     private static int[] columnWidths(String[] header, List<String[]> rows) {
