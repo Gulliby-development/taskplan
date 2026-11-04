@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Objects;
 
 /** Parses the command-line arguments for taskplan. */
-public record Options(String command, String file, int workers, int scale, Integer maxSlack, boolean help) {
+public record Options(String command, String file, int workers, int scale, Integer maxSlack, boolean reverse, boolean help) {
     public static final String USAGE = String.join("\n",
             "usage: taskplan check FILE",
             "       taskplan critical [--max-slack N] FILE",
             "       taskplan schedule [--workers N] FILE",
             "       taskplan gantt [--scale K] FILE",
-            "       taskplan order FILE");
+            "       taskplan order [--reverse] FILE");
 
     public Options {
         Objects.requireNonNull(command, "command");
@@ -27,7 +27,7 @@ public record Options(String command, String file, int workers, int scale, Integ
             throw new PlanException("missing command (check, critical, schedule, gantt or order)");
         }
         if (args.length == 1 && args[0].equals("--help")) {
-            return new Options("", null, 2, 1, null, true);
+            return new Options("", null, 2, 1, null, false, true);
         }
         if (args[0].equals("--help")) {
             throw unknownOption(args[0]);
@@ -42,6 +42,7 @@ public record Options(String command, String file, int workers, int scale, Integ
         String workerText = null;
         String scaleText = null;
         String maxSlackText = null;
+        boolean reverse = false;
         List<String> positionals = new ArrayList<>();
         for (int index = 1; index < args.length; index++) {
             String argument = args[index];
@@ -66,6 +67,8 @@ public record Options(String command, String file, int workers, int scale, Integ
                 maxSlackText = args[++index];
             } else if (argument.startsWith("--max-slack=")) {
                 maxSlackText = argument.substring("--max-slack=".length());
+            } else if (argument.equals("--reverse")) {
+                reverse = true;
             } else if (argument.startsWith("-") && !argument.equals("-")) {
                 throw unknownOption(argument);
             } else {
@@ -88,13 +91,16 @@ public record Options(String command, String file, int workers, int scale, Integ
         if (maxSlackText != null && !command.equals("critical")) {
             throw new PlanException("--max-slack is only valid for critical");
         }
+        if (reverse && !command.equals("order")) {
+            throw new PlanException("--reverse is only valid for order");
+        }
         if (positionals.isEmpty()) {
             throw new PlanException("missing FILE");
         }
         if (positionals.size() > 1) {
             throw new PlanException("too many arguments");
         }
-        return new Options(command, positionals.get(0), workers, scale, maxSlack, false);
+        return new Options(command, positionals.get(0), workers, scale, maxSlack, reverse, false);
     }
 
     public boolean isHelp() {

@@ -117,7 +117,7 @@ public final class Cli {
                 }
             }
             case "order" -> {
-                for (String line : Report.order(graph)) {
+                for (String line : Report.order(graph, options.reverse())) {
                     writeLine(stdout, line);
                 }
                 yield 0;

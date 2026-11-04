@@ -45,7 +45,7 @@ class CliTest {
                        taskplan critical [--max-slack N] FILE
                        taskplan schedule [--workers N] FILE
                        taskplan gantt [--scale K] FILE
-                       taskplan order FILE
+                       taskplan order [--reverse] FILE
                 """, result.stdout());
         assertEquals("", result.stderr());
     }

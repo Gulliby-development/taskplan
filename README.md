@@ -35,7 +35,7 @@ usage: taskplan check FILE
        taskplan critical [--max-slack N] FILE
        taskplan schedule [--workers N] FILE
        taskplan gantt [--scale K] FILE
-       taskplan order FILE
+       taskplan order [--reverse] FILE
 ```
 
 The following worked example uses `plan.txt`:
@@ -143,7 +143,9 @@ deploy
 docs
 ```
 
-Every task comes after all of its dependencies. When several tasks are ready, the one that is first in the file comes first. `order` takes no options and stops on the same plan problems as `critical`, `schedule` and `gantt`.
+Every task comes after all of its dependencies. When several tasks are ready, the one that is first in the file comes first. `order` takes only the `--reverse` option and stops on the same plan problems as `critical`, `schedule` and `gantt`.
+
+`order --reverse` prints exactly the same names in the opposite order, so every task comes before the tasks it depends on and the last line is the first task of the normal order. `--reverse` has no value and is only valid for `order`: with another command the error is `--reverse is only valid for order` (exit status 2).
 
 Use `--workers N` to set the worker count for `schedule`, `--scale K` to set the time scale for `gantt`, or `--max-slack N` to limit the tasks listed by `critical`.
 
